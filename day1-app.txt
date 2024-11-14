@@ -1,0 +1,36 @@
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(_name_)
+
+# In-memory database for student profiles
+students = []
+
+@app.route('/')
+def index():
+    return render_template('index.html', students=students)
+
+@app.route('/add', methods=['GET', 'POST'])
+def add_student():
+    if request.method == 'POST':
+        # Get form data
+        name = request.form['name']
+        age = request.form['age']
+        grade = request.form['grade']
+        
+        # Add new student to the list
+        student = {'id': len(students) + 1, 'name': name, 'age': age, 'grade': grade}
+        students.append(student)
+        
+        return redirect(url_for('index'))
+    
+    return render_template('add_student.html')
+
+@app.route('/delete/<int:student_id>', methods=['POST'])
+def delete_student(student_id):
+    global students
+    # Filter out the student to delete by ID
+    students = [student for student in students if student['id'] != student_id]
+    return redirect(url_for('index'))
+
+if _name_ == '_main_':
+    app.run(debug=True)
